@@ -1,17 +1,26 @@
 # ethereum-toolbox
 Toobox for Ethereum smartcontracts
 
-## ERC20Interface.sol
-Interface for ERC-20 Ethereum token
+## Simple token
 
-## StandardToken.sol
-Standard implementation model of ERC-20 Interface
+### MinimumViableToken.sol
+Minimum mandatory code for a simple token.
 
-## ExampleToken.sol
-Custom implementation of a StandardToken
+## More completed token
 
-## Owned.sol
-Tool for smart contract ownership management
+### ERC20Interface.sol
+Interface for ERC-20 Ethereum token.
+
+### StandardToken.sol
+Standard implementation model of ERC-20 Interface.
+
+### ExampleToken.sol
+Custom implementation of a StandardToken.
+
+## Other
+
+### Owned.sol
+Tool for smart contract ownership management.
 
 ## See also
 https://github.com/ConsenSys/Token-Factory
