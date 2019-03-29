@@ -6,7 +6,7 @@ Toobox for Ethereum smartcontracts
 ### MinimumViableToken.sol
 Minimum mandatory code for a simple token.
 
-## More completed token
+## Full token
 
 ### ERC20Interface.sol
 Interface for ERC-20 Ethereum token.
@@ -24,3 +24,5 @@ Tool for smart contract ownership management.
 
 ## See also
 https://github.com/ConsenSys/Token-Factory
+https://ethereum.org/token
+
