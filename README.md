@@ -24,5 +24,6 @@ Tool for smart contract ownership management.
 
 ## See also
 https://github.com/ConsenSys/Token-Factory
+
 https://ethereum.org/token
 
