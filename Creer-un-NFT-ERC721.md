@@ -6,7 +6,16 @@ Sur Ethereum, on trouve 2 standards de NFT :
 - [ERC-721](http://erc721.org/), qui permet de décrire un **token unique**, où le smart contract doit être instancié pour chaque nouvelle occurrence.
 - ERC-1155, qui permet gérer nativement un **token créé en quantité**.
 
-## ERC-721
+
+**Un NFT est avant tout un smart contract** qui :
+- contient toutes les données spécifique à l'objet qu'il représente
+- implémente les fonctionnalités standard (ERC-721 ou ERC-1155) qui vont définir les règles de possession et de transfert.
+
+Les interactions avec un NFT vont se faire au moyen de transactions, comme pour n'importe quelle activation de smart contract.
+
+## Sous le capot d’ERC-721
+
+Jetons un oeil aux fonctionnalités imposées par la norme ERC-721.
 
 ### Interface du smart contract
 

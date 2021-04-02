@@ -1,6 +1,4 @@
-// ----------------------------------------------------------------------------
-// Owned contract
-// ----------------------------------------------------------------------------
+pragma solidity ^0.8.3;
 
 contract Owned {
     address public owner;
@@ -8,8 +6,9 @@ contract Owned {
 
     event OwnershipTransferred(address indexed _from, address indexed _to);
 
-    constructor() public {
+    constructor() {
         owner = msg.sender;
+        emit OwnershipTransferred(address(0), owner);
     }
 
     modifier onlyOwner {
