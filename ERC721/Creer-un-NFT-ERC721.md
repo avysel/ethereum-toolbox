@@ -10,7 +10,7 @@ Sur Ethereum, on trouve plusieurs standards de tokens. Les plus connus sont :
 Le standard ERC-721 est le plus utilisé pour les NFT.
 
 
-Attention, dans le langage courant, **le token** peut désigner soit la définition du smart contract ERC-721 (ex: [le token CryptoKitties](https://etherscan.io/token/0x06012c8cf97bead5deae237070f9587f8e7a266d?a=2281#readContract), qui représente la collection des chats virtuels sur Ethereum), soit un actif précis issu de cette définition (ex: [le CryptoKitties numéro 10](https://etherscan.io/token/0x06012c8cf97bead5deae237070f9587f8e7a266d?a=10#inventory) qui est un chat roux avec des tâches roses appartenant à l'adresse 0x88207b431...). Il faut bien avoir cette distinction en tête pour ne pas se perdre dans certaines explications.
+Attention, dans le langage courant, **le token** peut désigner soit la définition du smart contract ERC-721 (ex: [le token CryptoKitties](https://etherscan.io/address/0x06012c8cf97bead5deae237070f9587f8e7a266d#code), qui représente la collection des chats virtuels sur Ethereum), soit un actif précis issu de cette définition (ex: [le CryptoKitties numéro 10](https://etherscan.io/token/0x06012c8cf97bead5deae237070f9587f8e7a266d?a=10#inventory) qui est un chat roux avec des tâches roses appartenant à l'adresse 0x88207b431...). Il faut bien avoir cette distinction en tête pour ne pas se perdre dans certaines explications.
 
 ## Fonctionnement général
 
