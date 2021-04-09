@@ -13,6 +13,28 @@ Sur Ethereum, on trouve 2 standards de NFT :
 
 Les interactions avec un NFT vont se faire au moyen de transactions, comme pour n'importe quelle activation de smart contract.
 
+## Fonctionnement général
+
+Un smart contract ERC-271 va permettre de gérer un ensemble de tokens de même type (les différents éléments d'une même collection, par exemple). Il va contenir une liste de tous les tokens créés, leurs propriétaires ainsi que les personnes ayant le droit d'agir sur ces tokens.
+
+### Opérateur et approbation
+
+Le propriétaire d'un token a les pleins pouvoir sur lui. Mais il peut aussi déléguer son droit à des **opérateurs**.
+
+La norme ERC-271 permet de définir cette délégation de deux façons différentes : via une **adresse approuvée**, propre à un token et qui peut agir au nom du propriétaire pour le token en question, ou via un **opérateur approuvé**, par lequel le propriétaire délègue son droit à un opérateur identifié pour l'ensemble de ses tokens (gérés par le contrat).
+
+Cette délégation permet notamment à une marketplace de gérer les échanges de NFT entre propriétaires et acheteurs.
+
+### ERC-165
+
+Afin de transférer un NFT à une autre utilisateur, aucun problème particulier ne se pose. Il le recevra dans son wallet et pourra le gérer à sa guise. 
+
+Mais si l'on souhaite le transférer à un autre contrat, il faut être certain que ce contrat destinataire puisse ensuite le gérer. Sinon cela reviendrait à brûler le token, il serait perdu à jamais.
+
+ERC-271 va alors s'appuyer sur la norme [ERC-165](https://eips.ethereum.org/EIPS/eip-165). Elle permet à un contrat de savoir si un autre contrat implémente bien telle interface. Tout contrat destiné à recevoir des NFT doit également l'implémenter afin de répondre favorablement à une vérification de capacité envoyée par l'émetteur.
+
+Attention, cette norme ne va pas garantir que tout se passera bien. Elle va simplement garantir que le créateur du contrat destinataire annonce qu'il a pris les mesures nécessaires pour que tout se passe bien. La nuance mérite d'être signalée.
+
 ## Sous le capot d’ERC-721
 
 Jetons un oeil aux fonctionnalités imposées par la norme ERC-721.
@@ -22,7 +44,7 @@ Jetons un oeil aux fonctionnalités imposées par la norme ERC-721.
 Voici l'interface qu'un smart contract doit implémenter pour être compatible ERC-721.
 
 ```
-pragma solidity ^0.8.3;
+pragma solidity ^0.8.0;
 
 interface ERC721 {
     event Transfer(address indexed _from, address indexed _to, uint256 indexed _tokenId);
@@ -101,3 +123,9 @@ Un smart contract qui veut définir un NFT doit donc implémenter ces fonctions.
 - vérifier que les `tokenId` utilisés existent bien
 - vérifier que seul de propriétaire du token peut accorder les droits à une autre personne
 - vérifier que seuls le propriétaire ou un utilisateur autorisé peuvent transférer un token
+
+## Exemple
+
+Nous allons mettre en place un token ERC-271 très simple afin de comprendre le mécanisme. Nous n'allons pas gérer une collection entière, mais un token unique. Nous pouvons presque dire que le contrat sera le token lui-même.
+
+Notre contrat ne va donc pas utiliser de moyen d'identifier un token, via son `tokenId`, mais cette notion sera tout de même présente dans les signatures de fonctions afin de respecter le standard.
