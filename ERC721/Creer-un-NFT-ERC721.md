@@ -1,29 +1,32 @@
-# Créer un NFT sur Ethereum
+# Mon premier NFT sur Ethereum avec ERC-271
 
-Les NFT (Non Fongible Token, tokens non fongibles) sont des tokens uniques, non remplaçables par d'autres.
+Les NFT (Non Fungible Token, tokens non fongibles) sont des tokens uniques, non remplaçables par d'autres.
 
-Sur Ethereum, on trouve 2 standards de NFT : 
-- [ERC-721](http://erc721.org/), qui permet de décrire un **token unique**, où le smart contract doit être instancié pour chaque nouvelle occurrence.
-- ERC-1155, qui permet gérer nativement un **token créé en quantité**.
+Sur Ethereum, on trouve plusieurs standards de tokens. Les plus connus sont :
+- [ERC-20](https://eips.ethereum.org/EIPS/eip-20) qui permet de mettre en place un token fongible, base de toutes les cryptomonnaies bâties sur Ethereum.
+- [ERC-721](http://erc721.org/), qui permet de décrire un token non fongible mais limite les transferts à un token à la fois par transaction.
+- [ERC-1155](https://eips.ethereum.org/EIPS/eip-1155), qui permet gérer simultanément des tokens fongibles, non fongibles, semi-fongibles et permet des transferts multiples en une seule transaction
+
+Le standard ERC-721 est le plus utilisé pour les NFT.
 
 
-**Un NFT est avant tout un smart contract** qui :
-- contient toutes les données spécifique à l'objet qu'il représente
-- implémente les fonctionnalités standard (ERC-721 ou ERC-1155) qui vont définir les règles de possession et de transfert.
-
-Les interactions avec un NFT vont se faire au moyen de transactions, comme pour n'importe quelle activation de smart contract.
-
-Attention, dans le langage courant, **le token** peut désigner soit la définition du smart contract ERC-271 (ex: le token CryptoKitties, qui représente la collection des chats virtuels sur Ethereum), soit un actif précis issu de cette définition (ex: le CryptoKitties numéro 456 qui est un chat vert et bleu appartenant à l'adresse 0x4ea20...). Il faut bien avoir cette distinction en tête pour ne pas se perdre dans certaines explications.
+Attention, dans le langage courant, **le token** peut désigner soit la définition du smart contract ERC-721 (ex: [le token CryptoKitties](https://etherscan.io/token/0x06012c8cf97bead5deae237070f9587f8e7a266d?a=2281#readContract), qui représente la collection des chats virtuels sur Ethereum), soit un actif précis issu de cette définition (ex: [le CryptoKitties numéro 10](https://etherscan.io/token/0x06012c8cf97bead5deae237070f9587f8e7a266d?a=10#inventory) qui est un chat roux avec des tâches roses appartenant à l'adresse 0x88207b431...). Il faut bien avoir cette distinction en tête pour ne pas se perdre dans certaines explications.
 
 ## Fonctionnement général
 
-Un smart contract ERC-271 va permettre de gérer un ensemble de tokens de même type (les différents éléments d'une même collection, par exemple). Il va contenir une liste de tous les tokens créés, leurs propriétaires ainsi que les personnes ayant le droit d'agir sur ces tokens.
+Un smart contract ERC-721 va permettre de gérer un ensemble de tokens de même type (les différents éléments d'une même collection, par exemple). Il va contenir une liste de tous les tokens créés, leurs propriétaires ainsi que les personnes ayant le droit d'agir sur ces tokens.
+
+**Un NFT est avant tout un smart contract** qui :
+- contient toutes les données spécifique à l'objet qu'il représente
+- implémente les fonctionnalités du standard qui vont définir les règles de possession et de transfert.
+
+Les interactions avec un NFT vont se faire au moyen de transactions, comme pour n'importe quelle activation de smart contract.
 
 ### Opérateur et approbation
 
 Le propriétaire d'un token a les pleins pouvoir sur lui. Mais il peut aussi déléguer son droit à des **opérateurs**.
 
-La norme ERC-271 permet de définir cette délégation de deux façons différentes : via une **adresse approuvée**, propre à un token et qui peut agir au nom du propriétaire pour le token en question, ou via un **opérateur approuvé**, par lequel le propriétaire délègue son droit à un opérateur identifié pour l'ensemble de ses tokens (gérés par le contrat).
+La norme ERC-721 permet de définir cette délégation de deux façons différentes : via une **adresse approuvée**, propre à un token et qui peut agir au nom du propriétaire pour le token en question, ou via un **opérateur approuvé**, par lequel le propriétaire délègue son droit à un opérateur identifié pour l'ensemble de ses tokens (gérés par le contrat).
 
 Cette délégation permet notamment à une marketplace de gérer les échanges de NFT entre propriétaires et acheteurs.
 
@@ -40,17 +43,15 @@ Afin de transférer un NFT à une autre utilisateur, aucun problème particulier
 
 Mais si l'on souhaite le transférer à un autre contrat, il faut être certain que ce contrat destinataire puisse ensuite le gérer. Sinon cela reviendrait à brûler le token, il serait perdu à jamais.
 
-ERC-271 va alors s'appuyer sur l'interface `ERC721TokenReceiver`. Elle permet à un contrat de savoir si un autre contrat implémente bien telle interface. Tout contrat destiné à recevoir des NFT doit également l'implémenter afin de répondre favorablement à une vérification de capacité envoyée par l'émetteur.
+ERC-721 va alors s'appuyer sur l'interface `ERC721TokenReceiver`. Elle permet à un contrat de savoir si un autre contrat implémente bien telle interface. Tout contrat destiné à recevoir des NFT doit également l'implémenter afin de répondre favorablement à une vérification de capacité envoyée par l'émetteur.
 
 Attention, cette norme ne va pas garantir que tout se passera bien. Elle va simplement garantir que le créateur du contrat destinataire annonce qu'il a pris les mesures nécessaires pour que tout se passe bien. La nuance mérite d'être signalée.
 
 ## Sous le capot d’ERC-721
 
-Jetons un oeil aux fonctionnalités imposées par la norme ERC-721.
-
 ### Interface du smart contract
 
-Voici l'interface qu'un smart contract doit implémenter pour être compatible ERC-721.
+Voici l'interface (ou plutôt les interfaces) qu'un smart contract doit implémenter pour être compatible ERC-721.
 
 ```
 pragma solidity ^0.8.0;
@@ -160,7 +161,7 @@ interface ERC721TokenReceiver {
 `ERC721TokenReceiver` que doit implémenter tout destinataire ou gestionnaire de NFT. La fonction `onERC721Received` doit retourner les 4 premiers octets du hachage de la signature de la fonction elle-même : `bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))`
 
 
-## Fonctionnement
+### Fonctionnement
 
 Un smart contract qui veut définir un NFT doit donc implémenter ces fonctions. Il faut également appliquer un certain nombre de règles :
 - les `tokenId` utilisés existent bien
@@ -175,9 +176,11 @@ Et bien entendu, il ne faut pas oublier de préciser quelles sont les spécifici
 
 Une implémentation complète de tout ceci est [proposée par OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts/token/ERC721).
 
+Nous allons partir de cette implémentation et la simplifier au maximum afin d'en tirer un exemple représentatif du coeur d'un NFT.
+
 ## Exemple
 
-Nous allons mettre en place un token ERC-271 très simple afin de comprendre le mécanisme. Nous n'allons pas gérer une collection entière, mais un token unique. Nous pouvons presque dire que le contrat sera le token lui-même.
+Nous allons mettre en place un token ERC-721 très simple afin de comprendre le mécanisme. Nous n'allons pas gérer une collection entière, mais un token unique. Nous pouvons presque dire que le contrat sera le token lui-même.
 
 Et n'oublions pas le principal, notre NFT va représenter numériquement une image, dont l'URI sera la donnée spécifique.
 
@@ -216,7 +219,6 @@ contract SimpleERC721 is IERC721, IERC721Metadata, IERC165 {
     // Approved operators
     mapping (address => bool) private _operatorApprovals;
 
-
     constructor (string memory name_, string memory symbol_, string memory uri_) {
         _owner = msg.sender;
         _name = name_;
@@ -230,7 +232,6 @@ contract SimpleERC721 is IERC721, IERC721Metadata, IERC165 {
             return 1;
         else
             return 0;
-
     }
 
     function ownerOf(uint256 tokenId) public view virtual override returns (address) {
@@ -314,7 +315,6 @@ contract SimpleERC721 is IERC721, IERC721Metadata, IERC165 {
         emit Transfer(from, to, tokenId);
     }
 
-    
     function _checkOnERC721Received(address from, address to, uint256 tokenId, bytes memory _data)
     private returns (bool)
     {
@@ -340,7 +340,6 @@ contract SimpleERC721 is IERC721, IERC721Metadata, IERC165 {
         return interfaceId == type(IERC721).interfaceId
         || interfaceId == type(IERC721Metadata).interfaceId;
     }    
-    
 }
 
 library Address {
@@ -352,3 +351,16 @@ library Address {
 }
 ```
 
+### Déploiement et utilisation
+
+Notre NFT va s'instancier avec les données qu'on lui passe dans le constructeur. Nous pouvons le déployer avec [Remix](https://remix.ethereum.org/) par exemple.
+
+Nous pouvons maintenant appeler ses méthodes pour le transférer d'un utilisateur à l'autre. Il pourra même être ajouté dans un wallet comme Metamask. Par contre, on pourra uniquement visualiser sa possession car Metamask ne gère pas le transfert de tokens ERC-721.
+
+## Conclusion
+
+Voilà, nous avons développé et déployé un NFT relativement simple sur Ethereum.
+
+Maintenant, pour monter un réel business sur ce NFT, il nous reste à identifier le type de données dont nous souhaitons équiper nos tokens et à développer dans le smart contract les règles spécifiques de création, échange, destruction ...
+
+Et n'oublions pas que le standard ne permet de gérer les éléments de bases, tels que les échanges et la propriété. Pour tout ce qui concerne ces règles spécifiques, il nous faudra développer une plateforme (site web, échange décentralisé ...) pour que nos utilisateurs puissent interagir confortablement avec notre NFT sans devoir en appeler les fonctions via Remix ou web3 !
