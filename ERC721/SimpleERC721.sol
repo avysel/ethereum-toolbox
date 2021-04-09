@@ -3,13 +3,38 @@
 pragma solidity ^0.8.0;
 
 
+interface IERC721 {
+    event Transfer(address indexed _from, address indexed _to, uint256 indexed _tokenId);
+    event Approval(address indexed _owner, address indexed _approved, uint256 indexed _tokenId);
+    event ApprovalForAll(address indexed _owner, address indexed _operator, bool _approved);
+
+    function balanceOf(address _owner) external view returns (uint256);
+    function ownerOf(uint256 _tokenId) external view returns (address);
+    function safeTransferFrom(address _from, address _to, uint256 _tokenId, bytes calldata data) external payable;
+    function safeTransferFrom(address _from, address _to, uint256 _tokenId) external payable;
+    function transferFrom(address _from, address _to, uint256 _tokenId) external payable;
+    function approve(address _approved, uint256 _tokenId) external payable;
+    function setApprovalForAll(address _operator, bool _approved) external;
+    function getApproved(uint256 _tokenId) external view returns (address);
+    function isApprovedForAll(address _owner, address _operator) external view returns (bool);
+}
+
 interface IERC721Receiver {
     function onERC721Received(address operator, address from, uint256 tokenId, bytes calldata data) external returns (bytes4);
 }
 
+interface IERC721Metadata {
+    function name() external view returns (string memory _name);
+    function symbol() external view returns (string memory _symbol);
+    function tokenURI(uint256 _tokenId) external view returns (string memory);
+}
+
+interface IERC165 {
+    function supportsInterface(bytes4 interfaceID) external view returns (bool);
+}
 
 
-contract SimpleERC721 {
+contract SimpleERC721 is IERC721, IERC721Metadata, IERC165 {
 
     using Address for address;
 
@@ -32,10 +57,6 @@ contract SimpleERC721 {
     mapping (address => bool) private _operatorApprovals;
 
 
-    event Transfer(address indexed _from, address indexed _to, uint256 indexed _tokenId);
-    event Approval(address indexed _owner, address indexed _approved, uint256 indexed _tokenId);
-    event ApprovalForAll(address indexed _owner, address indexed _operator, bool _approved);
-
     constructor (string memory name_, string memory symbol_, string memory uri_) {
         _owner = msg.sender;
         _name = name_;
@@ -43,32 +64,32 @@ contract SimpleERC721 {
         _uri = uri_;
     }
 
-    function balanceOf(address owner) public view virtual returns (uint256) {
-        require(owner != address(0), "ERC721: balance query for the zero address");
-        if(_owner == owner)
+    function balanceOf(address tokenOwner) public view virtual override returns (uint256) {
+        require(tokenOwner != address(0), "ERC721: balance query for the zero address");
+        if(_owner == tokenOwner)
             return 1;
         else
             return 0;
 
     }
 
-    function ownerOf(uint256 tokenId) public view virtual returns (address) {
+    function ownerOf(uint256 tokenId) public view virtual override returns (address) {
         return _owner;
     }
 
-    function name() public view virtual returns (string memory) {
+    function name() public view virtual override returns (string memory) {
         return _name;
     }
 
-    function symbol() public view virtual returns (string memory) {
+    function symbol() public view virtual override returns (string memory) {
         return _symbol;
     }
 
-    function tokenURI(uint256 tokenId) public view virtual returns (string memory) {
+    function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         return _uri;
     }
 
-    function approve(address to, uint256 tokenId) public virtual {
+    function approve(address to, uint256 tokenId) public virtual payable override {
         require(to != _owner, "ERC721: approval to current owner");
 
         require(msg.sender == _owner || isApprovedForAll(_owner, msg.sender),
@@ -78,32 +99,36 @@ contract SimpleERC721 {
         _approve(to, tokenId);
     }
 
-    function getApproved(uint256 tokenId) public view virtual returns (address) {
+    function getApproved(uint256 tokenId) public view virtual override returns (address) {
         return _tokenApproval;
     }
 
-    function setApprovalForAll(address operator, bool approved) public virtual {
+    function setApprovalForAll(address operator, bool approved) public virtual override {
         require(_owner == msg.sender);
         require(operator != msg.sender, "ERC721: approve to caller");
         _operatorApprovals[operator] = approved;
         emit ApprovalForAll(msg.sender, operator, approved);
     }
 
-    function isApprovedForAll(address owner, address operator) public view virtual returns (bool) {
+    function isApprovedForAll(address owner, address operator) public view virtual override returns (bool) {
         return _operatorApprovals[operator];
     }
 
-    function transferFrom(address from, address to, uint256 tokenId) public virtual {
-        //solhint-disable-next-line max-line-length
+    function _approve(address to, uint256 tokenId) internal virtual {
+        _tokenApproval = to;
+        emit Approval(this.ownerOf(tokenId), to, 0);
+    }
+
+    function transferFrom(address from, address to, uint256 tokenId) public virtual payable override {
         require(_isApprovedOrOwner(msg.sender, tokenId), "ERC721: transfer caller is not owner nor approved");
         _transfer(from, to, tokenId);
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId) public virtual {
+    function safeTransferFrom(address from, address to, uint256 tokenId) public virtual payable override {
         safeTransferFrom(from, to, tokenId, "");
     }
 
-    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) public virtual {
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory _data) public virtual payable override {
         require(_isApprovedOrOwner(msg.sender, tokenId), "ERC721: transfer caller is not owner nor approved");
         _safeTransfer(from, to, tokenId, _data);
     }
@@ -114,15 +139,12 @@ contract SimpleERC721 {
     }
 
     function _isApprovedOrOwner(address spender, uint256 tokenId) internal view virtual returns (bool) {
-        address owner = this.ownerOf(tokenId);
-        return (spender == owner || getApproved(tokenId) == spender || isApprovedForAll(owner, spender));
+        return (spender == _owner || getApproved(tokenId) == spender || isApprovedForAll(_owner, spender));
     }
 
     function _transfer(address from, address to, uint256 tokenId) internal virtual {
-        require(this.ownerOf(tokenId) == from, "ERC721: transfer of token that is not own");
+        require(_owner == from, "ERC721: transfer of token that is not own");
         require(to != address(0), "ERC721: transfer to the zero address");
-
-        _beforeTokenTransfer(from, to, tokenId);
 
         // Clear approvals from the previous owner
         _approve(address(0), tokenId);
@@ -132,10 +154,6 @@ contract SimpleERC721 {
         emit Transfer(from, to, tokenId);
     }
 
-    function _approve(address to, uint256 tokenId) internal virtual {
-        _tokenApproval = to;
-        emit Approval(this.ownerOf(tokenId), to, 0);
-    }
 
     function _checkOnERC721Received(address from, address to, uint256 tokenId, bytes memory _data)
     private returns (bool)
@@ -158,20 +176,17 @@ contract SimpleERC721 {
         }
     }
 
-    function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual { }
+    function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165) returns (bool) {
+        return interfaceId == type(IERC721).interfaceId
+        || interfaceId == type(IERC721Metadata).interfaceId;
+    }
+
 }
 
 library Address {
-
     function isContract(address account) internal view returns (bool) {
-        // This method relies on extcodesize, which returns 0 for contracts in
-        // construction, since the code is only stored at the end of the
-        // constructor execution.
-
         uint256 size;
-        // solhint-disable-next-line no-inline-assembly
         assembly { size := extcodesize(account) }
         return size > 0;
     }
-
 }
