@@ -1,6 +1,6 @@
 # Mon premier NFT sur Ethereum avec ERC-271
 
-Les NFT (Non Fungible Token, tokens non fongibles) sont des tokens uniques, non remplaçables par d'autres.
+Après avoir vu ce qu'était un NFT, il est maintenant temps de se lancer dans l'aventure et de mettre les mains dans la machine pour développer un premier NFT sur Ethereum.
 
 Sur Ethereum, on trouve plusieurs standards de tokens. Les plus connus sont :
 - [ERC-20](https://eips.ethereum.org/EIPS/eip-20) qui permet de mettre en place un token fongible, base de toutes les cryptomonnaies bâties sur Ethereum.
@@ -8,7 +8,6 @@ Sur Ethereum, on trouve plusieurs standards de tokens. Les plus connus sont :
 - [ERC-1155](https://eips.ethereum.org/EIPS/eip-1155), qui permet gérer simultanément des tokens fongibles, non fongibles, semi-fongibles et permet des transferts multiples en une seule transaction
 
 Le standard ERC-721 est le plus utilisé pour les NFT.
-
 
 Attention, dans le langage courant, **le token** peut désigner soit la définition du smart contract ERC-721 (ex: [le token CryptoKitties](https://etherscan.io/address/0x06012c8cf97bead5deae237070f9587f8e7a266d#code), qui représente la collection des chats virtuels sur Ethereum), soit un actif précis issu de cette définition (ex: [le CryptoKitties numéro 10](https://etherscan.io/token/0x06012c8cf97bead5deae237070f9587f8e7a266d?a=10#inventory) qui est un chat roux avec des tâches roses appartenant à l'adresse 0x88207b431...). Il faut bien avoir cette distinction en tête pour ne pas se perdre dans certaines explications.
 
@@ -180,7 +179,7 @@ Nous allons partir de cette implémentation et la simplifier au maximum afin d'e
 
 ## Exemple
 
-Nous allons mettre en place un token ERC-721 très simple afin de comprendre le mécanisme. Nous n'allons pas gérer une collection entière, mais un token unique. Nous pouvons presque dire que le contrat sera le token lui-même.
+Nous allons mettre en place un token ERC-721 très simple afin de comprendre le mécanisme. Le but ne sera pas de gérer une collection entière, mais un token unique. Nous pouvons presque dire que le contrat sera le token lui-même.
 
 Et n'oublions pas le principal, notre NFT va représenter numériquement une image, dont l'URI sera la donnée spécifique.
 
