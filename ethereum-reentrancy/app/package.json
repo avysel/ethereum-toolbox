@@ -1,0 +1,30 @@
+{
+  "name": "ethereum-reentrancy",
+  "version": "1.0.0",
+  "description": "Test pour comprendre la faille de sécurité \"Ré-entrée\" d'Ethereum.",
+  "main": "reentrancy.js",
+  "dependencies": {
+    "big.js": "^5.2.2",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "ganache-cli": "^6.1.8",
+    "json-stringify-safe": "^5.0.1",
+    "pug": "^3.0.1",
+    "solc": "^0.5.0",
+    "web3": "^0.20.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/avysel/ethereum-reentrancy.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/avysel/ethereum-reentrancy/issues"
+  },
+  "homepage": "https://github.com/avysel/ethereum-reentrancy#readme"
+}
