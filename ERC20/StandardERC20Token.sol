@@ -2,7 +2,7 @@ pragma solidity ^0.5.7;
 
 import "./ERC20Interface.sol";
 
-contract StandardToken is ERC20Interface {
+contract StandardERC20Token is ERC20Interface {
 
     function transfer(address payable _to, uint256 _value) public returns (bool success) {
         if (balances[msg.sender] >= _value && _value > 0) {

@@ -1,6 +1,6 @@
 pragma solidity >=0.4.22 <0.6.0;
 
-contract MyToken {
+contract MinimumERC20Token {
     /* This creates an array with all balances */
     mapping (address => uint256) public balanceOf;
 
