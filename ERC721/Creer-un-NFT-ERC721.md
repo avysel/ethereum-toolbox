@@ -1,13 +1,15 @@
-# Mon premier NFT sur Ethereum avec ERC-271
+# Mon premier NFT sur Ethereum avec ERC-721
 
 Après avoir vu ce qu'était un NFT, il est maintenant temps de se lancer dans l'aventure et de mettre les mains dans la machine pour développer un premier NFT sur Ethereum.
 
 Sur Ethereum, on trouve plusieurs standards de tokens. Les plus connus sont :
 - [ERC-20](https://eips.ethereum.org/EIPS/eip-20) qui permet de mettre en place un token fongible, base de toutes les cryptomonnaies bâties sur Ethereum.
-- [ERC-721](http://erc721.org/), qui permet de décrire un token non fongible mais limite les transferts à un token à la fois par transaction.
-- [ERC-1155](https://eips.ethereum.org/EIPS/eip-1155), qui permet gérer simultanément des tokens fongibles, non fongibles, semi-fongibles et permet des transferts multiples en une seule transaction
+- [ERC-721](http://erc721.org/), qui permet de décrire un token non fongible mais limite les transferts à un token à la fois par transaction. Il ne permet de décrire qu’un seul type de token à la fois.
+- [ERC-1155](https://eips.ethereum.org/EIPS/eip-1155), qui permet gérer simultanément plusieurs types de tokens et de toutes natures (fongibles, non fongibles, semi-fongibles). Il rend possible les transferts multiples en une seule transaction. ERC-1155 propose également une gestion plus riche des données spécifiques au token et permet aussi de sécuriser systématiquement l'envoi d'un NFT à un destinataire qui est en capacité de le gérer, là ou ERC-721  le proposait sans l'imposer.
 
-Le standard ERC-721 est le plus utilisé pour les NFT.
+Le standard ERC-721 est le plus utilisé pour les NFT de par son rôle historique. Mais l'ERC-1155 commence à s'impose comme une nouvelle version de ce standard, qui a appris des problèmes de son prédécesseur.
+
+Pour notre exemple, nous allons réaliser un token ERC-721, certes en voie d'obsolescence, mais plus simple à comprendre pour un premier essai.
 
 Attention, dans le langage courant, **le token** peut désigner soit la définition du smart contract ERC-721 (ex: [le token CryptoKitties](https://etherscan.io/address/0x06012c8cf97bead5deae237070f9587f8e7a266d#code), qui représente la collection des chats virtuels sur Ethereum), soit un actif précis issu de cette définition (ex: [le CryptoKitties numéro 10](https://etherscan.io/token/0x06012c8cf97bead5deae237070f9587f8e7a266d?a=10#inventory) qui est un chat roux avec des tâches roses appartenant à l'adresse 0x88207b431...). Il faut bien avoir cette distinction en tête pour ne pas se perdre dans certaines explications.
 
