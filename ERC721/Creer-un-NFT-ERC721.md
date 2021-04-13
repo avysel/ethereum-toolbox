@@ -2,6 +2,8 @@
 
 Après avoir vu ce qu'était un NFT, il est maintenant temps de se lancer dans l'aventure et de mettre les mains dans la machine pour développer un premier NFT sur Ethereum.
 
+## Les standards
+
 Sur Ethereum, on trouve plusieurs standards de tokens. Les plus connus sont :
 - [ERC-20](https://eips.ethereum.org/EIPS/eip-20) qui permet de mettre en place un token fongible, base de toutes les cryptomonnaies bâties sur Ethereum.
 - [ERC-721](http://erc721.org/), qui permet de décrire un token non fongible mais limite les transferts à un token à la fois par transaction. Il ne permet de décrire qu’un seul type de token à la fois.
@@ -152,7 +154,10 @@ interface ERC165 {
 }
 
 ```
-`ERC721Metadata` et `ERC-165`, à implémenter pour gérer les données spécifiques et la détection de leur présence. L'interfaceId est obtenu par `IERC721Receiver(contractAddress).onERC721Received.selector`. Le contrat retourne `true` s'il l'implémente.
+`ERC721Metadata` et `ERC-165`, à implémenter pour gérer les données spécifiques et la détection de leur présence. 
+Un nom et un symbole, comme pour une cryptomonnaie, qui peuvent être vides. Un `tokenURI` qui pointe vers la description du token. 
+Cet URI est propre à chaque implémentation. 
+La spécification ERC-721 propose qu’il soit un lien vers un fichier JSON hébergé par le créateur du token.
 
 ```
 interface ERC721TokenReceiver {
@@ -185,11 +190,12 @@ Nous allons mettre en place un token ERC-721 très simple afin de comprendre le 
 
 Et n'oublions pas le principal, notre NFT va représenter numériquement une image, dont l'URI sera la donnée spécifique.
 
-Notre contrat va donc comporter quelques spécificités :
-- il ne va pas utiliser de moyen d'identifier un token, via son `tokenId`, mais cette notion sera tout de même présente dans les signatures de fonctions afin de respecter le standard.
-- le calcul de la balance d'un utilisateur sera simple, s'il est propriétaire du token, sa balance sera de 1, sinon elle sera à 0
-- il contiendra une seule adresse approuvée et une liste d'opérateurs approuvés, sans distinction de `tokenId` ou de propriétaire. La différence entre cex deux délégation ne sera pas énorme car il n'y aura pas plusieurs tokens à gérer.
-- il contiendra directement l'URI de l'image qu'il représente et non un lien vers un fichier JSON 
+Notre contrat va donc comporter quelques simplifications : :
+- étant unique, il ne gérera pas de liste de tokens, il sera le token
+- de même, il ne va pas utiliser de moyen d’identifier un token précis parmi une collection, via son tokenId, mais cette notion sera tout de même présente dans les signatures de fonctions afin de respecter le standard
+- le calcul de la balance (via `balanceOf`) d’un utilisateur sera simple, s’il est propriétaire du token, sa balance sera de 1, sinon elle sera à 0
+- il contiendra une seule adresse approuvée et une liste d’opérateurs approuvés, sans distinction de tokenId ou de propriétaire. La différence entre ces deux délégations ne sera pas énorme car il n’y aura pas plusieurs tokens à gérer.
+- il contiendra directement l’URI de l’image qu’il représente et non un lien vers un fichier JSON
 
 ### Notre contrat
 
@@ -354,14 +360,16 @@ library Address {
 
 ### Déploiement et utilisation
 
-Notre NFT va s'instancier avec les données qu'on lui passe dans le constructeur. Nous pouvons le déployer avec [Remix](https://remix.ethereum.org/) par exemple.
+Notre NFT va s’instancier avec les données qu’on lui passe dans le constructeur. Nous pouvons le déployer avec [Remix](https://remix.ethereum.org/) par exemple.
 
-Nous pouvons maintenant appeler ses méthodes pour le transférer d'un utilisateur à l'autre. Il pourra même être ajouté dans un wallet comme Metamask. Par contre, on pourra uniquement visualiser sa possession car Metamask ne gère pas le transfert de tokens ERC-721.
+Nous pouvons maintenant appeler ses méthodes pour le transférer d’un utilisateur à l’autre. Il pourra même être ajouté dans un wallet comme Metamask. Par contre, on pourra uniquement visualiser sa possession car Metamask ne gère pas le transfert de tokens ERC-721.
 
 ## Conclusion
 
 Voilà, nous avons développé et déployé un NFT relativement simple sur Ethereum.
 
-Maintenant, pour monter un réel business sur ce NFT, il nous reste à identifier le type de données dont nous souhaitons équiper nos tokens et à développer dans le smart contract les règles spécifiques de création, échange, destruction ...
+Maintenant, pour monter un réel business sur ce NFT, il nous reste à identifier le type de données dont nous souhaitons équiper nos tokens et à développer dans le smart contract les règles spécifiques de création, échange, destruction …
 
-Et n'oublions pas que le standard ne permet de gérer les éléments de bases, tels que les échanges et la propriété. Pour tout ce qui concerne ces règles spécifiques, il nous faudra développer une plateforme (site web, échange décentralisé ...) pour que nos utilisateurs puissent interagir confortablement avec notre NFT sans devoir en appeler les fonctions via Remix ou web3 !
+Et n’oublions pas que le standard ne permet de gérer que les éléments de bases, tels que les échanges et la propriété. Pour tout ce qui concerne ces règles spécifiques, il nous faudra développer une plateforme (site web, échange décentralisé …) pour que nos utilisateurs puissent interagir confortablement avec notre NFT sans devoir en appeler les fonctions via Remix ou web3 !
+
+Et peut-être que notre business pour poussera à utiliser ERC-1155 pour plus de flexibilité. Mais le fonctionnement de base reste le même.
