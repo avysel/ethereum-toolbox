@@ -1,2 +1,5 @@
 .idea/
 *.iml
+**/
+
+web3-browser/node_modules
