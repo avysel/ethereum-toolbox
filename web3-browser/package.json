@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.3",
-    "web3": "^1.8.1",
+    "web3": "^4.0.2",
     "ws": "^7.5.1"
   }
 }
